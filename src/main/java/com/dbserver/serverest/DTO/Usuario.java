@@ -6,8 +6,6 @@ package com.dbserver.serverest.DTO;
         private String password;
         private String administrador;
 
-        private String idUsuario;
-
         public Usuario(String nome, String email, String password, String administrador) {
             this.nome = nome;
             this.email = email;
@@ -30,8 +28,6 @@ package com.dbserver.serverest.DTO;
         public String getAdministrador() {
             return administrador;
         }
-
-        public String getUsuarioId() {return idUsuario; }
 
 
     }
