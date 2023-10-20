@@ -9,9 +9,15 @@ public class UsuarioProvider {
     String emailRandom = gerarEmailAleatorio();
 
 
+    public static String gerarEmailAleatorio() {
+        String uuid = UUID.randomUUID().toString();
+        String email = uuid + "@example.com";
+        return email;
+    }
+
     public Usuario providerUsuario(){
         Usuario user = new Usuario(
-                "Eduarda Zingano",
+                "Juliana Nogueira",
                 emailRandom,
                 "senha",
                 "true"
@@ -19,29 +25,5 @@ public class UsuarioProvider {
         return user;
     }
 
-    public static String gerarEmailAleatorio() {
-        String uuid = UUID.randomUUID().toString();
-        String email = uuid + "@example.com";
-        return email;
-    }
-
-    public Usuario providerUsuarioJaCriado(){
-        Usuario user = new Usuario(
-                "Eduarda Zingano",
-                "duda@email.com",
-                "senha",
-                "true"
-                );
-        return user;
-    }
-    public Usuario providerUsuarioPut(){
-        Usuario user = new Usuario(
-                "Duda Silva",
-                "duda@email.com",
-                "senha",
-                "true"
-                );
-        return user;
-    }
 
 }
