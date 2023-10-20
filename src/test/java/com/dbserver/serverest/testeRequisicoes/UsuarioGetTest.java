@@ -5,21 +5,20 @@ import com.dbserver.serverest.DTO.Usuario;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import com.dbserver.serverest.provider.UsuarioProvider;
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.hamcrest.Matchers.*;
 
 public class UsuarioGetTest {
 
     private static final String URL = "https://serverest.dev";
-    private UsuarioProvider usuarioProvider;
+    private static UsuarioProvider usuarioProvider;
 
-    @BeforeEach
-    void setup(){
+    @BeforeAll
+    static void setup(){
         RestAssured.baseURI = URL;
         usuarioProvider = new UsuarioProvider();
     }
@@ -30,13 +29,11 @@ public class UsuarioGetTest {
         Response response = given()
                 .when()
                 .get("/usuarios");
-        assertEquals(200, response.getStatusCode());
 
-        String email = response.jsonPath().getString("usuarios[0].email");
-        String password = response.jsonPath().getString("usuarios[0].password");
-
-        assertFalse(email.isEmpty());
-        assertFalse(password.isEmpty());
+        response.then()
+                .statusCode(200)
+                .body("usuarios[0].email", not(empty()))
+                .body("usuarios[0].password", not(empty()));
 
     }
 
@@ -46,28 +43,22 @@ public class UsuarioGetTest {
         Usuario usuarioPost = usuarioProvider.providerUsuario();
 
         Response responsePost = given()
-                .baseUri(URL)
                 .contentType(ContentType.JSON)
                 .body(usuarioPost)
                 .when()
                 .post("/usuarios");
-
 
         String idUsuario = responsePost.jsonPath().getString("_id");
 
         Response responseGet = given()
                 .when()
                 .get("/usuarios/" + idUsuario);
-        assertEquals(200, responseGet.getStatusCode());
 
-
-        String email = responseGet.jsonPath().getString("email");
-        String senha = responseGet.jsonPath().getString("password");
-        String id = responseGet.jsonPath().getString("_id");
-
-        assertEquals(usuarioPost.getEmail(), email);
-        assertEquals(usuarioPost.getPassword(), senha);
-        assertEquals(idUsuario, id);
+        responseGet.then()
+                .statusCode(200)
+                .body("email", equalTo(usuarioPost.getEmail()))
+                .body("password", equalTo(usuarioPost.getPassword()))
+                .body("_id", equalTo(idUsuario));
 
     }
 }

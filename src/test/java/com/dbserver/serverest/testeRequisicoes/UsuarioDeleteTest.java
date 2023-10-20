@@ -5,21 +5,20 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import com.dbserver.serverest.DTO.Usuario;
 import com.dbserver.serverest.provider.UsuarioProvider;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.Matchers.equalTo;
 
 public class UsuarioDeleteTest {
-    private static final String url = "https://serverest.dev";
-    private UsuarioProvider usuarioProvider;
+    private static final String URL = "https://serverest.dev";
+    private static UsuarioProvider usuarioProvider;
 
-    @BeforeEach
-    void setup() {
-        RestAssured.baseURI = url;
+    @BeforeAll
+   static void setup() {
+        RestAssured.baseURI = URL;
         usuarioProvider = new UsuarioProvider();
     }
 
@@ -28,37 +27,33 @@ public class UsuarioDeleteTest {
     void testExcluiUsuario() {
         Usuario usuarioPost = usuarioProvider.providerUsuario();
         Response responsePost = given()
-                .baseUri(url)
                 .contentType(ContentType.JSON)
                 .body(usuarioPost)
                 .when()
                 .post("/usuarios");
 
-        assertEquals(201, responsePost.getStatusCode());
-
         String idUsuario = responsePost.jsonPath().getString("_id");
 
         Response responseDelete = given()
-                .baseUri(url)
                 .contentType(ContentType.JSON)
                 .when()
                 .delete("/usuarios/" + idUsuario);
 
-        assertEquals(200, responseDelete.getStatusCode());
-        assertTrue(responseDelete.getBody().asString().contains("Registro excluído com sucesso"));
-
+        responseDelete.then()
+                .statusCode(200)
+                .body("message", equalTo("Registro excluído com sucesso"));
     }
 
     @Test
     @DisplayName("Deve retornar que nada foi excluído se o usuário for inexistente")
     void naoExcluiUsuarioQueNaoExiste() {
-        Response resposta = given()
+        Response response = given()
                 .contentType(ContentType.JSON)
                 .when()
                 .delete("/usuarios/9999999999999999999999999999999999");
 
-        assertEquals(200, resposta.getStatusCode());
-        assertTrue(resposta.getBody().asString().contains("Nenhum registro excluído"));
+        response.then()
+                .statusCode(200)
+                .body("message", equalTo("Nenhum registro excluído"));
     }
-
 }
