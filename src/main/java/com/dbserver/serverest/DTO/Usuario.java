@@ -1,10 +1,12 @@
-package com.dbserver.serverest.model;
+package com.dbserver.serverest.DTO;
 
     public class Usuario {
         private String nome;
         private String email;
         private String password;
         private String administrador;
+
+        private String idUsuario;
 
         public Usuario(String nome, String email, String password, String administrador) {
             this.nome = nome;
@@ -29,7 +31,8 @@ package com.dbserver.serverest.model;
             return administrador;
         }
 
-        public void setEmail(String email) {
-        }
+        public String getUsuarioId() {return idUsuario; }
+
+
     }
 
