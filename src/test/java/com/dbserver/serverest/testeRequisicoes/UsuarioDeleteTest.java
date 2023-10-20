@@ -3,8 +3,8 @@ package com.dbserver.serverest.testeRequisicoes;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import com.dbserver.serverest.model.Usuario;
-import com.dbserver.serverest.stub.UsuarioStub;
+import com.dbserver.serverest.DTO.Usuario;
+import com.dbserver.serverest.provider.UsuarioProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,18 +15,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UsuarioDeleteTest {
     private static final String url = "https://serverest.dev";
-    private UsuarioStub usuarioStub;
+    private UsuarioProvider usuarioProvider;
 
     @BeforeEach
     void setup() {
         RestAssured.baseURI = url;
-        usuarioStub = new UsuarioStub();
+        usuarioProvider = new UsuarioProvider();
     }
 
     @Test
     @DisplayName("Deve excluir um usuário existente")
     void testExcluiUsuario() {
-        Usuario usuarioPost = usuarioStub.stubUsuario();
+        Usuario usuarioPost = usuarioProvider.providerUsuario();
         Response responsePost = given()
                 .baseUri(url)
                 .contentType(ContentType.JSON)
@@ -50,8 +50,8 @@ public class UsuarioDeleteTest {
     }
 
     @Test
-    @DisplayName("Não exclui nenhum usuário se o mesmo não for existente")
-    void naoExcluiUsuario() {
+    @DisplayName("Deve retornar que nada foi excluído se o usuário for inexistente")
+    void naoExcluiUsuarioQueNaoExiste() {
         Response resposta = given()
                 .contentType(ContentType.JSON)
                 .when()

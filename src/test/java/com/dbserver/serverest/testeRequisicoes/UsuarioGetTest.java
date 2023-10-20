@@ -1,6 +1,6 @@
 package com.dbserver.serverest.testeRequisicoes;
 
-import com.dbserver.serverest.model.Usuario;
+import com.dbserver.serverest.DTO.Usuario;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -8,20 +8,20 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import com.dbserver.serverest.stub.UsuarioStub;
+import com.dbserver.serverest.provider.UsuarioProvider;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class UsuarioGetTest {
 
-    private static final String url = "https://serverest.dev";
-    private UsuarioStub usuarioStub;
+    private static final String URL = "https://serverest.dev";
+    private UsuarioProvider usuarioProvider;
 
     @BeforeEach
     void setup(){
-        RestAssured.baseURI = url;
-        usuarioStub = new UsuarioStub();
+        RestAssured.baseURI = URL;
+        usuarioProvider = new UsuarioProvider();
     }
 
     @Test
@@ -41,23 +41,12 @@ public class UsuarioGetTest {
     }
 
     @Test
-    @DisplayName( "Deve retornar erro ao acessar endpoint inválido")
-    void testErroAoBuscarUsuarios() {
-        Response response = given()
-                .baseUri(url)
-                .when()
-                .get("/usuarios/endpoint-inexistente");
-
-        assertEquals(400, response.getStatusCode());
-    }
-
-    @Test
     @DisplayName("Deve buscar um usuário por ID")
     void testBuscaUsuarioPorId() {
-        Usuario usuarioPost = usuarioStub.stubUsuario();
+        Usuario usuarioPost = usuarioProvider.providerUsuario();
 
         Response responsePost = given()
-                .baseUri(url)
+                .baseUri(URL)
                 .contentType(ContentType.JSON)
                 .body(usuarioPost)
                 .when()

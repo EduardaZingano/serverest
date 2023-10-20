@@ -1,22 +1,21 @@
-package com.dbserver.serverest.stub;
+package com.dbserver.serverest.provider;
 
-import com.dbserver.serverest.model.Usuario;
+import com.dbserver.serverest.DTO.Usuario;
 
 import java.util.UUID;
 
-public class UsuarioStub {
-
-    private String idUsuario;
+public class UsuarioProvider {
 
     String emailRandom = gerarEmailAleatorio();
 
 
-    public Usuario stubUsuario(){
+    public Usuario providerUsuario(){
         Usuario user = new Usuario(
                 "Eduarda Zingano",
                 emailRandom,
                 "senha",
-                "true");
+                "true"
+                );
         return user;
     }
 
@@ -26,29 +25,23 @@ public class UsuarioStub {
         return email;
     }
 
-    public Usuario stubUsuarioJaCriado(){
+    public Usuario providerUsuarioJaCriado(){
         Usuario user = new Usuario(
                 "Eduarda Zingano",
                 "duda@email.com",
                 "senha",
-                "true");
+                "true"
+                );
         return user;
     }
-    public Usuario stubUsuarioPut(){
+    public Usuario providerUsuarioPut(){
         Usuario user = new Usuario(
                 "Duda Silva",
                 "duda@email.com",
                 "senha",
-                "true");
+                "true"
+                );
         return user;
-    }
-
-    public String getUsuarioId() {
-        return this.idUsuario;
-    }
-
-    public String setIdUsuario(String idUsuario) {
-        return this.idUsuario = idUsuario;
     }
 
 }

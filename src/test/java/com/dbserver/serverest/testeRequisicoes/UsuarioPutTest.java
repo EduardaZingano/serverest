@@ -1,7 +1,7 @@
 package com.dbserver.serverest.testeRequisicoes;
 
-import com.dbserver.serverest.model.Usuario;
-import com.dbserver.serverest.stub.UsuarioStub;
+import com.dbserver.serverest.DTO.Usuario;
+import com.dbserver.serverest.provider.UsuarioProvider;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -15,21 +15,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UsuarioPutTest {
 
-    private static final String url = "https://serverest.dev";
-    private UsuarioStub usuarioStub;
+    private static final String URL = "https://serverest.dev";
+    private UsuarioProvider usuarioProvider;
 
     @BeforeEach
     void setup(){
-        RestAssured.baseURI = url;
-        usuarioStub = new UsuarioStub();
+        RestAssured.baseURI = URL;
+        usuarioProvider = new UsuarioProvider();
     }
 
     @Test
     @DisplayName("Deve atualizar um usuário existente")
     void testAtualizaUsuario(){
-        Usuario novoUsuario = usuarioStub.stubUsuario();
+        Usuario novoUsuario = usuarioProvider.providerUsuario();
         Response responsePost = given()
-                .baseUri(url)
+                .baseUri(URL)
                 .contentType(ContentType.JSON)
                 .body(novoUsuario)
                 .when()
@@ -37,10 +37,10 @@ public class UsuarioPutTest {
 
         String idUsuario = responsePost.jsonPath().getString("_id");
 
-        Usuario usuarioAtualizado = usuarioStub.stubUsuarioPut();
+        Usuario usuarioAtualizado = usuarioProvider.providerUsuarioPut();
 
         Response response = given()
-                .baseUri(url)
+                .baseUri(URL)
                 .contentType(ContentType.JSON)
                 .body(usuarioAtualizado)
                 .when()
@@ -50,7 +50,7 @@ public class UsuarioPutTest {
         assertTrue(response.getBody().asString().contains("Registro alterado com sucesso"));
 
         Response responseGet = given()
-                .baseUri(url)
+                .baseUri(URL)
                 .contentType(ContentType.JSON)
                 .when()
                 .get("/usuarios/" + idUsuario);

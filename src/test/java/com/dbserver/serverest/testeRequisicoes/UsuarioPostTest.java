@@ -1,8 +1,8 @@
 package com.dbserver.serverest.testeRequisicoes;
 
 
-import com.dbserver.serverest.model.Usuario;
-import com.dbserver.serverest.stub.UsuarioStub;
+import com.dbserver.serverest.DTO.Usuario;
+import com.dbserver.serverest.provider.UsuarioProvider;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -16,19 +16,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UsuarioPostTest {
 
-    private final String url = "https://serverest.dev";
-    private UsuarioStub usuarioStub = new UsuarioStub();
+    private final String URL = "https://serverest.dev";
+    private UsuarioProvider usuarioProvider;
 
     @BeforeEach
     void setup() {
-        RestAssured.baseURI = url;
-        usuarioStub = new UsuarioStub();
+        RestAssured.baseURI = URL;
+        usuarioProvider = new UsuarioProvider();
     }
 
     @Test
     @DisplayName("Deve cadastrar um novo usuário")
     void cadastraNovoUsuario() {
-        Usuario usuarioPost = usuarioStub.stubUsuario();
+        Usuario usuarioPost = usuarioProvider.providerUsuario();
         Response responsePost = given()
                 .contentType(ContentType.JSON)
                 .body(usuarioPost)
@@ -36,7 +36,6 @@ public class UsuarioPostTest {
                 .post("/usuarios");
 
         assertEquals(201, responsePost.getStatusCode());
-        usuarioStub.setIdUsuario(responsePost.jsonPath().getString("_id"));
         assertTrue(responsePost.getBody().asString().contains("Cadastro realizado com sucesso"));
 
     }
@@ -45,16 +44,16 @@ public class UsuarioPostTest {
     @DisplayName("Deve retornar erro ao cadastrar um usuário com email que já exista")
     void testCadastraUsuarioComEmailRepetido(){
 
-        Usuario usuarioPost = usuarioStub.stubUsuarioJaCriado();
+        Usuario usuarioPost = usuarioProvider.providerUsuarioJaCriado();
         Response responsePost = given()
-                .baseUri(url)
+                .baseUri(URL)
                 .contentType(ContentType.JSON)
                 .body(usuarioPost)
                 .when()
                 .post("/usuarios");
 
         Response responsePost2 = given()
-                .baseUri(url)
+                .baseUri(URL)
                 .contentType(ContentType.JSON)
                 .body(usuarioPost)
                 .when()
